@@ -38,8 +38,8 @@ chronyd -q
 echo "### Creating partitions..."
 parted -s -a optimal ${TARGET_DISK} \
   mklabel gpt \
-  mkpart primary 0% ${TARGET_BOOT_SIZE} \
-  mkpart primary 1GiB 100% \
+  mkpart 0% ${TARGET_BOOT_SIZE} \
+  mkpart 1GiB 100% \
 echo "### Formatting partitions..."
 yes | mkfs.vfat -F 32 ${TARGET_DISK}1
 yes | mkfs.xfs -f ${TARGET_DISK}2
