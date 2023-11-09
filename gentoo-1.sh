@@ -57,13 +57,13 @@ modprobe dm_mod # Load necessary modules into memory
 vgscan # Check that kernel realizes that we just read in an LVM 
 yes | vgchange -ay # Activate logical volume groups
 echo "### Setting filesystem for root/home logical volumes..."
-yes | mkfs.xfs /dev/vg0/lv_root
-yes | mkfs.xfs /dev/vg0/lv_home
+yes | mkfs.xfs /dev/vg0/lv-root
+yes | mkfs.xfs /dev/vg0/lv-home
 
 echo "### Mounting partitions..."
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
-mkdir -p /mnt/root && mount /dev/vg0/lv_root /mnt/home
-mkdir -p /mnt/home && mount /dev/vg0/lv-home /mnt/boot
+mkdir -p /mnt/root && mount /dev/vg0/lv-root /mnt/root
+mkdir -p /mnt/home && mount /dev/vg0/lv-home /mnt/home
 
 
 
