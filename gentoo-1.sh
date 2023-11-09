@@ -47,7 +47,7 @@ yes | mkfs.xfs ${TARGET_DISK}2
 
 echo "### Labeling partitions..."
 e2label ${TARGET_DISK}1 boot
-e2label ${TARGET_DISK}3 volgroup0
+e2label ${TARGET_DISK}2 volgroup0
 
 echo "### Mounting partitions..."
 mkdir -p /mnt/gentoo/boot && mount ${TARGET_DISK}1 /mnt/gentoo/boot
