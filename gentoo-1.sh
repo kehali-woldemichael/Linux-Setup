@@ -33,7 +33,7 @@ GRUB_PLATFORMS=pc
 echo "### Checking configuration..." # Can add later
 
 echo "### Setting time..."
-ntpd -gq
+chronyd -q
 
 echo "### Creating partitions..."
 parted -s -a optimal ${TARGET_DISK} \
