@@ -65,5 +65,12 @@ mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
 mkdir -p /mnt/root && mount /dev/vg0/lv-root /mnt/root
 mkdir -p /mnt/home && mount /dev/vg0/lv-home /mnt/home
 
+cd /mnt/root
+# Stage 3 with llvm, openrc, and musl
+wget "https://distfiles.gentoo.org/releases/arm64/autobuilds/20231105T230202Z/stage3-arm64-musl-llvm-20231105T230202Z.tar.xz"
+tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+
+cd /mnt/root/etc/portage/
+
 
 
