@@ -25,7 +25,7 @@ GENTOO_ARCH="amd64"
 GENTOO_STAGE3="amd64"
 GRUB_PLATFORMS=pc
 
-TARGET_DISK=/dev/vda
+TARGET_DISK=/dev/vdb
 TARGET_BOOT_SIZE=1GiB
 TARGET_ROOT_SIZE=15GiB
 # Home will be rest of remaining space 
@@ -33,7 +33,7 @@ TARGET_ROOT_SIZE=15GiB
 echo "### Checking configuration..." # Can add later
 
 echo "### Setting time..."
-chronyd -q
+#chronyd -q
 
 echo "### Creating partitions..."
 parted -s -a optimal ${TARGET_DISK} \
