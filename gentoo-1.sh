@@ -74,7 +74,7 @@ mkdir -p /mnt/gentoo
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
 mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/gentoo/root
 mkdir -p /mnt/gentoo/home && mount /dev/vg0/lv-home /mnt/gentoo/home
-mkdir -p /mnt/gentoo/efi && mount $disk2 /mnt/gentoo/efi
+mkdir -p /mnt/gentoo/efi && mount $disk1 /mnt/gentoo/efi
 
 echo "\n### Downloading and unpacking stage3 tarball"
 cd /mnt/gentoo
