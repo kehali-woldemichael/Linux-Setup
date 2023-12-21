@@ -110,6 +110,8 @@ cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/ #  Copy DNS info
 wait
 
+exit
+
 echo "\n"
 echo "### Mounting file system"
 mount --types proc /proc /mnt/gentoo/proc
