@@ -117,7 +117,7 @@ mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run 
 
 echo "\n### Entering the new environment"
-wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo-2.sh && wait
+#wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo-2.sh && wait
 chmod +x gentoo-2.sh
 
 
