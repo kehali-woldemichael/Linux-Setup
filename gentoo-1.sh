@@ -39,8 +39,8 @@ echo "\n### Setting time..."
 chronyd -q
 
 echo "\n### Creating partitions..."
-parted -s -a optimal ${TARGET_DISK} \
-  mklabel gpt \
+print "
+parted -s -a optimal ${TARGET_DISK} \  mklabel gpt \
   mkpart primary 0% ${TARGET_BOOT_SIZE} \
   mkpart primary 1GiB 100% \
 echo "### Formatting partitions..."
@@ -71,6 +71,7 @@ mkswap /dev/vg0/lv-swap
 swapon /dev/vg0/lv-swap
 
 echo "\n### Mounting partitions..."
+mkdir -p /mnt/gentoo
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
 mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/root
 mkdir -p /mnt/gentoo/home && mount /dev/vg0/lv-home /mnt/home
