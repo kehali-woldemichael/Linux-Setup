@@ -1,8 +1,9 @@
 #!/bin/sh
 # Stage 2 of install
 
-source $PWD/gentoo-1.sh # to get installation information from Stage 1 file
+#source $PWD/gentoo-1.sh # to get installation information from Stage 1 file
 
+chroot /mnt/gentoo /bin/bash 
 source /etc/profile 
 export PS1="(chroot) ${PS1}"
 
