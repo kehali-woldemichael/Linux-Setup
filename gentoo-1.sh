@@ -26,51 +26,123 @@ GENTOO_STAGE3="amd64"
 GRUB_PLATFORMS=pc
 
 TARGET_DISK=/dev/sda
+disk1="{$TARGET_DISK}1"
+disk2="${TARGET_DISK}2"
 TARGET_BOOT_SIZE=1GiB
 TARGET_ROOT_SIZE=20GiB
+TARGET_SWAP_SIZE=10GiB
 # Home will be rest of remaining space 
 
-echo "### Checking configuration..." # Can add later
+echo "\n### Checking configuration..." # Can add later
 
-echo "### Setting time..."
-#chronyd -q
+echo "\n### Setting time..."
+chronyd -q
 
-echo "### Creating partitions..."
+echo "\n### Creating partitions..."
 parted -s -a optimal ${TARGET_DISK} \
   mklabel gpt \
   mkpart primary 0% ${TARGET_BOOT_SIZE} \
   mkpart primary 1GiB 100% \
 echo "### Formatting partitions..."
 yes | mkfs.vfat -F 32 ${TARGET_DISK}1
-yes | mkfs.xfs -f ${TARGET_DISK}2
+yes | mkfs.btrfs -f ${TARGET_DISK}2
 
-echo "### Setting up encrypted physical volume"
-cryptsetup luksFormat /dev/vda2
-cryptsetup open --type luks /dev/vda2 lvm
+echo "\n### Setting up encrypted physical volume"
+cryptsetup luksFormat "$disk2"
+cryptsetup open --type luks "$disk2" lvm
 pvcreate --dataalignment 1m /dev/mapper/lvm
 vgcreate vg0 /dev/mapper/lvm
-echo "### Creating logical volumes for home/root within encrypted physical volume..."
+
+echo "\n### Creating logical volumes for home/root within encrypted physical volume..."
 lvcreate -L ${TARGET_ROOT_SIZE} vg0 -n lv-root 
+lvcreate -L ${TARGET_SWAP_SIZE} vg0 -n lv-swap
 lvcreate -l 100%FREE vg0 -n lv-home
-echo "### Activating home/root logic volumes..."
+
+echo "\n### Activating logic volumes..."
 modprobe dm_mod # Load necessary modules into memory
 vgscan # Check that kernel realizes that we just read in an LVM 
 yes | vgchange -ay # Activate logical volume groups
-echo "### Setting filesystem for root/home logical volumes..."
-yes | mkfs.xfs /dev/vg0/lv-root
-yes | mkfs.xfs /dev/vg0/lv-home
 
-echo "### Mounting partitions..."
+echo "\n### Setting filesystem for root/home/swap logical volumes..."
+yes | mkfs.btrfs /dev/vg0/lv-root
+yes | mkfs.btrfs /dev/vg0/lv-home
+yes | mkfs.btrfs /dev/vg0/lv-swap
+mkswap /dev/vg0/lv-swap
+swapon /dev/vg0/lv-swap
+
+echo "\n### Mounting partitions..."
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
-mkdir -p /mnt/root && mount /dev/vg0/lv-root /mnt/root
-mkdir -p /mnt/home && mount /dev/vg0/lv-home /mnt/home
+mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/root
+mkdir -p /mnt/gentoo/home && mount /dev/vg0/lv-home /mnt/home
 
-cd /mnt/root
-# Stage 3 with llvm, openrc, and musl
-wget "https://distfiles.gentoo.org/releases/arm64/autobuilds/20231105T230202Z/stage3-arm64-musl-llvm-20231105T230202Z.tar.xz"
+echo "\n### Downloading and unpacking stage3 tarball"
+cd /mnt/gentoo
+# Stage 3 with openrc
+if [[ $GENTOO_ARCH = "amd64"]]; then 
+    wget "https://distfiles.gentoo.org/releases/amd64/autobuilds/20231217T170203Z/stage3-x32-openrc-20231217T170203Z.tar.xz"
+    base_flags="-march=native -mtune=native -Ofast -pipe -flto"
+elif [[ $GENTOO_ARCH = "arm64"]]; then
+    wget "https://distfiles.gentoo.org/releases/arm64/autobuilds/20231218T134654Z/stage3-arm64-openrc-20231218T134654Z.tar.xz"
+    base_flags="-mcpu=native -Ofast -pipe -flto"
+fi
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 
-cd /mnt/root/etc/portage/
+echo "\n### Configuring make.conf"
+cd /mnt/gentoo/etc/portage/
+make_conf="/mnt/gentoo/etc/portage/make.conf"
+touch $make_conf
+echo "COMMON_FLAGS="$base_flags"" > $make_conf
+echo "CFLAGS="${COMMON_FLAGS}"" > $make_conf
+echo "CXXFLAGS="${COMMON_FLAGS}"" > $make_conf
+echo "MAKEOPTS="-j"" > $make_conf
+
+
+echo "\n### Selecting mirror"
+mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
+mkdir --parents /mnt/gentoo/etc/portage/repos.conf
+cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+
+
+echo "\n### Mounting file system"
+mount --types proc /proc /mnt/gentoo/proc
+mount --rbind /sys /mnt/gentoo/sys
+mount --make-rslave /mnt/gentoo/sys
+mount --rbind /dev /mnt/gentoo/dev
+mount --make-rslave /mnt/gentoo/dev
+mount --bind /run /mnt/gentoo/run
+mount --make-slave /mnt/gentoo/run 
+
+echo "\n### Entering the new environment"
+chroot /mnt/gentoo /bin/bash 
+source /etc/profile 
+export PS1="(chroot) ${PS1}"
+
+echo "\n### Preparing for a bootloader"
+mkdir /efi
+mount "$disk1" /efi 
+
+echo "\n### Configuring Portage"
+emerge-webrsync # Installing a Gentoo ebuild repository snapshot from the web
+emerge --sync # Updating the Gentoo ebuild repository
+
+echo "\n### Configuring Portage"
+eselect profile list
+read -p "Select profile: " profile_choice
+eselect profile set "$profile_choice"
+emerge --ask --verbose --update --deep --newuse @world
+emerge --info | grep ^USE > /etc/portage/make.conf
+
+echo "\n### Printing current make.conf"
+cat /etc/portage/make.conf
+echo "\n"
+
+emerge --ask app-portage/cpuid2cpuflags
+echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+
+
+
+
+
 
 
 
