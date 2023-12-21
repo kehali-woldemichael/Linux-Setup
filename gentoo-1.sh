@@ -74,6 +74,7 @@ mkdir -p /mnt/gentoo
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
 mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/gentoo/root
 mkdir -p /mnt/gentoo/home && mount /dev/vg0/lv-home /mnt/gentoo/home
+mkdir -p /mnt/gentoo/efi && mount $disk2 /mnt/gentoo/efi
 
 echo "\n### Downloading and unpacking stage3 tarball"
 cd /mnt/gentoo
@@ -91,7 +92,6 @@ tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 wait
 
 echo "\n### Configuring make.conf"
-cd /mnt/gentoo/etc/portage/
 make_conf="/mnt/gentoo/etc/portage/make.conf"
 touch $make_conf
 echo "COMMON_FLAGS="$base_flags"" > $make_conf
@@ -102,10 +102,11 @@ echo "MAKEOPTS="-j"" > $make_conf
 
 echo "\n### Selecting mirror"
 mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
+wait
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/ #  Copy DNS info
-
+wait
 
 echo "\n### Mounting file system"
 mount --types proc /proc /mnt/gentoo/proc
@@ -115,6 +116,7 @@ mount --rbind /dev /mnt/gentoo/dev
 mount --make-rslave /mnt/gentoo/dev
 mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run 
+wait
 
 echo "\n### Entering the new environment"
 #wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo-2.sh && wait
