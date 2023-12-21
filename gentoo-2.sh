@@ -1,6 +1,15 @@
 #!/bin/sh
 # Stage 2 of install
 
+GENTOO_MIRROR="http://distfiles.gentoo.org"
+GENTOO_ARCH="amd64"
+GENTOO_STAGE3="amd64"
+GRUB_PLATFORMS=pc
+
+TARGET_DISK=/dev/sda
+disk1="${TARGET_DISK}1"
+disk2="${TARGET_DISK}2"
+
 source /etc/profile 
 export PS1="(chroot) ${PS1}"
 
