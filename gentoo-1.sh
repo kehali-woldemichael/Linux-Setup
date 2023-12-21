@@ -101,11 +101,11 @@ echo "\n"
 echo "### Configuring make.conf"
 make_conf="/mnt/gentoo/etc/portage/make.conf"
 touch $make_conf
-echo "COMMON_FLAGS="$base_flags"" >> $make_conf
-echo "CFLAGS="${COMMON_FLAGS}"" >> $make_conf
-echo "CXXFLAGS="${COMMON_FLAGS}"" >> $make_conf
-echo "MAKEOPTS="-j"" >> $make_conf
-echo "GENTOO_MIRRORS="https://mirrors.mit.edu/gentoo-distfiles/ http://www.gtlib.gatech.edu/pub/gentoo"" >> /mnt/gentoo/etc/portage/make.conf
+echo 'COMMON_FLAGS="$base_flags"' >> $make_conf
+echo 'CFLAGS="${COMMON_FLAGS}"' >> $make_conf
+echo 'CXXFLAGS="${COMMON_FLAGS}"' >> $make_conf
+echo '"MAKEOPTS="-j"' >> $make_conf
+echo 'GENTOO_MIRRORS="https://mirrors.mit.edu/gentoo-distfiles/ http://www.gtlib.gatech.edu/pub/gentoo"' >> /mnt/gentoo/etc/portage/make.conf
 
 wait
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
