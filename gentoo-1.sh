@@ -26,7 +26,7 @@ GENTOO_STAGE3="amd64"
 GRUB_PLATFORMS=pc
 
 TARGET_DISK=/dev/sda
-disk1="{$TARGET_DISK}1"
+disk1="${TARGET_DISK}1"
 disk2="${TARGET_DISK}2"
 TARGET_BOOT_SIZE=1GiB
 TARGET_ROOT_SIZE=20GiB
@@ -39,7 +39,6 @@ echo "\n### Setting time..."
 chronyd -q
 
 echo "\n### Creating partitions..."
-print "
 parted -s -a optimal ${TARGET_DISK} \  mklabel gpt \
   mkpart primary 0% ${TARGET_BOOT_SIZE} \
   mkpart primary 1GiB 100% \
@@ -73,20 +72,23 @@ swapon /dev/vg0/lv-swap
 echo "\n### Mounting partitions..."
 mkdir -p /mnt/gentoo
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
-mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/root
-mkdir -p /mnt/gentoo/home && mount /dev/vg0/lv-home /mnt/home
+mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/gentoo/root
+mkdir -p /mnt/gentoo/home && mount /dev/vg0/lv-home /mnt/gentoo/home
 
 echo "\n### Downloading and unpacking stage3 tarball"
 cd /mnt/gentoo
 # Stage 3 with openrc
-if [[ $GENTOO_ARCH = "amd64"]]; then 
-    wget "https://distfiles.gentoo.org/releases/amd64/autobuilds/20231217T170203Z/stage3-x32-openrc-20231217T170203Z.tar.xz"
+if [[ $GENTOO_ARCH == "amd64" ]]; then 
     base_flags="-march=native -mtune=native -Ofast -pipe -flto"
-elif [[ $GENTOO_ARCH = "arm64"]]; then
-    wget "https://distfiles.gentoo.org/releases/arm64/autobuilds/20231218T134654Z/stage3-arm64-openrc-20231218T134654Z.tar.xz"
+    wget "https://distfiles.gentoo.org/releases/amd64/autobuilds/20231217T170203Z/stage3-x32-openrc-20231217T170203Z.tar.xz"
+    wait
+elif [[ $GENTOO_ARCH == "arm64" ]]; then
     base_flags="-mcpu=native -Ofast -pipe -flto"
+    wget "https://distfiles.gentoo.org/releases/arm64/autobuilds/20231218T134654Z/stage3-arm64-openrc-20231218T134654Z.tar.xz"
+    wait
 fi
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+wait
 
 echo "\n### Configuring make.conf"
 cd /mnt/gentoo/etc/portage/
@@ -114,31 +116,9 @@ mount --bind /run /mnt/gentoo/run
 mount --make-slave /mnt/gentoo/run 
 
 echo "\n### Entering the new environment"
+wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo-2.sh
 chroot /mnt/gentoo /bin/bash 
-source /etc/profile 
-export PS1="(chroot) ${PS1}"
 
-echo "\n### Preparing for a bootloader"
-mkdir /efi
-mount "$disk1" /efi 
-
-echo "\n### Configuring Portage"
-emerge-webrsync # Installing a Gentoo ebuild repository snapshot from the web
-emerge --sync # Updating the Gentoo ebuild repository
-
-echo "\n### Configuring Portage"
-eselect profile list
-read -p "Select profile: " profile_choice
-eselect profile set "$profile_choice"
-emerge --ask --verbose --update --deep --newuse @world
-emerge --info | grep ^USE > /etc/portage/make.conf
-
-echo "\n### Printing current make.conf"
-cat /etc/portage/make.conf
-echo "\n"
-
-emerge --ask app-portage/cpuid2cpuflags
-echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 
 
 
