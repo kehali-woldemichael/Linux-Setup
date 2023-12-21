@@ -101,7 +101,6 @@ echo "\n"
 echo "### Configuring make.conf"
 make_conf="/mnt/gentoo/etc/portage/make.conf"
 cd /mnt/gentoo/etc/portage
-touch $make_conf
 wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo_make.conf
 cd /mnt/gentoo
 
