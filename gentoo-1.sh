@@ -25,9 +25,9 @@ GENTOO_ARCH="amd64"
 GENTOO_STAGE3="amd64"
 GRUB_PLATFORMS=pc
 
-TARGET_DISK=/dev/vdb
+TARGET_DISK=/dev/sda
 TARGET_BOOT_SIZE=1GiB
-TARGET_ROOT_SIZE=15GiB
+TARGET_ROOT_SIZE=20GiB
 # Home will be rest of remaining space 
 
 echo "### Checking configuration..." # Can add later
