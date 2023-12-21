@@ -21,8 +21,8 @@
 set -e
 
 GENTOO_MIRROR="http://distfiles.gentoo.org"
-GENTOO_ARCH="amd64"
-GENTOO_STAGE3="amd64"
+GENTOO_ARCH="arm64"
+GENTOO_STAGE3="arm64"
 GRUB_PLATFORMS=pc
 
 TARGET_DISK=/dev/sda
