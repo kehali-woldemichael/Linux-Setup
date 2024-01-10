@@ -1,1 +1,4 @@
-wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/alpine-ans-v1
+# Modify repos 
+echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/main" > /etc/apk/repositories 
+echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/community" >> /etc/apk/repositories 
+echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/testing" >> /etc/apk/repositories 
