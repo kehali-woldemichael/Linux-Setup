@@ -1,7 +1,7 @@
 # Compiling 
 apk add build-base abuild cmake extra-cmake-modules ccache
 apk add git 
-git clone git@github.com:djpohly/dwl.git
+git clone https://codeberg.org/dwl/dwl.git
 apk add libinput wayland wlroots xkbcommon wayland-protocols pkg-config 
 cd dwl && make
 
