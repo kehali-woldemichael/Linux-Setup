@@ -1,3 +1,12 @@
+# Compiling 
+apk add build-base abuild cmake extra-cmake-modules ccache
+apk add git 
+git clone git@github.com:djpohly/dwl.git
+apk add libinput wayland wlroots xkbcommon wayland-protocols pkg-config 
+cd dwl && make
+
+exit
+
 # Modify repos 
 echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/main" > /etc/apk/repositories 
 echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/community" >> /etc/apk/repositories 
@@ -13,14 +22,14 @@ echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER && chmod 0440 /etc/sudoers.d/$
 # Setting up shell
 apk add shadow zsh zsh-completions 
 chsh $USER -s /bin/zsh
+
+exit
+
 # Shell utilities 
 apk add util-linux pciutils hwdata-pci usbutils hwdata-usb 
 apk add coreutils binutils findutils grep iproute2 udisks2
 
-exit 
 
-# Compiling 
-apk add build-base abuild cmake extra-cmake-modules ccache
 
 # QOF
 apk add neovim ranger trash-cli 
