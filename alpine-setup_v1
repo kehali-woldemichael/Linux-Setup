@@ -2,3 +2,10 @@
 echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/main" > /etc/apk/repositories 
 echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/community" >> /etc/apk/repositories 
 echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/testing" >> /etc/apk/repositories 
+apk update && apk upgrade 
+wait
+
+# Setting up user 
+apk add sudo
+USER='kbw29'
+echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER && chmod 0440 /etc/sudoers.d/$USER
