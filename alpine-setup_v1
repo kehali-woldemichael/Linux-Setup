@@ -7,8 +7,24 @@ wait
 
 # Setting up user 
 apk add sudo
-USER='kbw29'
+USER="kbw29"
 echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER && chmod 0440 /etc/sudoers.d/$USER
+
+# Setting up shell
+apk add shadow zsh zsh-completions 
+chsh $USER -s /bin/zsh
+# Shell utilities 
+apk add util-linux pciutils hwdata-pci usbutils hwdata-usb coreutils binutils findutils grep iproute2
+
+exit 
+
+# Compiling 
+apk add build-base abuild cmake extra-cmake-modules ccache
+
+# QOF
+apk add neovim ranger trash-cli 
+apk add dmenu 
+apk add wezterm wezterm-zsh-completion wezterm-mux-server
 
 # Man pages
 # mandoc (man command), man-pages (provides the system's core manual pages)
