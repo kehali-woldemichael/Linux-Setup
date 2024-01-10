@@ -20,4 +20,4 @@ SSHDOPTS="-c openssh"
 NTPOPTS="-c openntpd"
 
 # Use /dev/sda as a data disk
-DISKOPTS="-m lvm /dev/sda"
+DISKOPTS="-Lm sys -s 0 /dev/sda"
