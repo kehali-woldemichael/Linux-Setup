@@ -9,3 +9,10 @@ wait
 apk add sudo
 USER='kbw29'
 echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER && chmod 0440 /etc/sudoers.d/$USER
+
+# Man pages
+# mandoc (man command), man-pages (provides the system's core manual pages)
+apk add mandoc man-pages
+# mandoc-apropos (command to search in man pages), docs (to always install the documentation companion package)
+apk add mandoc-apropos docs
+
