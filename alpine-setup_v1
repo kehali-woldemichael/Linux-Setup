@@ -1,11 +1,13 @@
-# Compiling 
-apk add build-base abuild cmake extra-cmake-modules ccache
-apk add git 
+
 git clone https://codeberg.org/dwl/dwl.git
 apk add libinput wayland wlroots xkbcommon wayland-protocols pkg-config 
 cd dwl && make
 
 exit
+
+# Compiling 
+apk add build-base abuild cmake extra-cmake-modules ccache
+apk add git 
 
 # Modify repos 
 echo "https://mirror.math.princeton.edu/pub/alpinelinux/edge/main" > /etc/apk/repositories 
