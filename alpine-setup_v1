@@ -14,7 +14,8 @@ echo "$USER ALL=(ALL) ALL" > /etc/sudoers.d/$USER && chmod 0440 /etc/sudoers.d/$
 apk add shadow zsh zsh-completions 
 chsh $USER -s /bin/zsh
 # Shell utilities 
-apk add util-linux pciutils hwdata-pci usbutils hwdata-usb coreutils binutils findutils grep iproute2
+apk add util-linux pciutils hwdata-pci usbutils hwdata-usb 
+apk add coreutils binutils findutils grep iproute2 udisks2
 
 exit 
 
