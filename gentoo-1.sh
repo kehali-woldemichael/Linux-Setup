@@ -15,6 +15,7 @@ disk2="${TARGET_DISK}2"
 
 # Home will be rest of remaining space 
 TARGET_BOOT_SIZE=1GiB
+POST_BOOT_SIZE=2GiB
 TARGET_ROOT_SIZE=20GiB
 TARGET_SWAP_SIZE=16GiB
 
@@ -26,7 +27,7 @@ echo "\n"
 echo "### Creating partitions..."
 parted -s -a optimal $TARGET_DISK \  mklabel gpt \
   mkpart primary 0% $TARGET_BOOT_SIZE \
-  mkpart primary 100%FREE \
+  mkpart primary $TARGET_BOOT_SIZE 100% \
 echo "### Formatting partitions..."
 yes | mkfs.vfat -L efi -F32 $disk1
 yes | mkfs.btrfs -L rootfs -f $disk2
