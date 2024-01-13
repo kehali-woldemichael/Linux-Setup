@@ -1,22 +1,6 @@
 #!/bin/sh
 
-##
 # GENTOO QUICK INSTALLER
-#
-# Read more: http://www.artembutusov.com/gentoo-linux-quick-installer-script/
-#
-# Usage:
-#
-# export OPTION1=VALUE1
-# export OPTION2=VALUE2
-# ./gentoo-quick-installer.sh
-#
-# Options:
-#
-# USE_LIVECD_KERNEL - 1 to use livecd kernel (saves time) or 0 to build kernel (takes time)
-# SSH_PUBLIC_KEY - ssh public key, pass contents of `cat ~/.ssh/id_rsa.pub` for example
-# ROOT_PASSWORD - root password, only SSH key-based authentication will work if not set
-##
 
 set -e
 
@@ -28,10 +12,11 @@ GRUB_PLATFORMS=pc
 TARGET_DISK=/dev/sda
 disk1="${TARGET_DISK}1"
 disk2="${TARGET_DISK}2"
+
+# Home will be rest of remaining space 
 TARGET_BOOT_SIZE=1GiB
 TARGET_ROOT_SIZE=20GiB
 TARGET_SWAP_SIZE=16GiB
-# Home will be rest of remaining space 
 
 echo "\n"
 echo "### Setting time..."
@@ -39,17 +24,17 @@ chronyd -q
 
 echo "\n"
 echo "### Creating partitions..."
-parted -s -a optimal ${TARGET_DISK} \  mklabel gpt \
-  mkpart primary 0% ${TARGET_BOOT_SIZE} \
-  mkpart primary 1GiB 100% \
+parted -s -a optimal $TARGET_DISK \  mklabel gpt \
+  mkpart primary 0% $TARGET_BOOT_SIZE \
+  mkpart primary 100%FREE \
 echo "### Formatting partitions..."
-yes | mkfs.vfat -F 32 ${TARGET_DISK}1
-yes | mkfs.btrfs -f ${TARGET_DISK}2
+yes | mkfs.vfat -L efi -F32 $disk1
+yes | mkfs.btrfs -L rootfs -f $disk2
 
 echo "\n"
 echo "### Setting up encrypted physical volume"
-cryptsetup luksFormat "$disk2"
-cryptsetup open --type luks "$disk2" lvm
+cryptsetup luksFormat $disk2
+cryptsetup open --type luks $disk2 lvm
 pvcreate --dataalignment 1m /dev/mapper/lvm
 vgcreate vg0 /dev/mapper/lvm
 
@@ -70,18 +55,26 @@ echo "### Setting filesystem for root/home/swap logical volumes..."
 yes | mkfs.btrfs /dev/vg0/lv-root
 yes | mkfs.btrfs /dev/vg0/lv-home
 yes | mkfs.f2fs /dev/vg0/lv-swap
-
-
 mkswap /dev/vg0/lv-swap
 swapon /dev/vg0/lv-swap
 
 echo "\n"
-echo "### Mounting partitions..."
+echo "### Mounting ..."
 
-mkdir -p /mnt/gentoo
+mkdir -p /mnt/gentoo && mount -o compress-force=zstd:3 /dev/vg0/lv-root /mnt/gentoo
 mkdir -p /mnt/gentoo/efi && mount $disk1 /mnt/gentoo/efi
-mkdir -p /mnt/gentoo/root && mount  -o compress-force=zstd:3 /dev/vg0/lv-root /mnt/gentoo/root
-mkdir -p /mnt/gentoo/home && mount  -o compress-force=zstd:3 /dev/vg0/lv-home /mnt/gentoo/home
+mkdir -p /mnt/gentoo/home && mount -o compress-force=zstd:3 /dev/vg0/lv-home /mnt/gentoo/home
+# Swap is not mounted to the filesystem like a device file. 
+
+# Mount proc, dev and shm filesystems
+mount --types proc /proc /mnt/gentoo/proc
+mount --rbind /sys /mnt/gentoo/sys && mount --make-rslave /mnt/gentoo/sys
+mount --rbind /dev /mnt/gentoo/dev && mount --make-rslave /mnt/gentoo/dev
+mount --bind /run /mnt/gentoo/run && mount --make-slave /mnt/gentoo/run 
+test -L /dev/shm && rm /dev/shm && mkdir /dev/shm
+mount -t tmpfs -o nosuid,nodev,noexec shm /dev/shm
+chmod 1777 /dev/shm
+wait
 
 echo "\n"
 echo "### Downloading and unpacking stage3 tarball"
@@ -97,6 +90,8 @@ elif [[ $GENTOO_ARCH == "arm64" ]]; then
     wait
 fi
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-2.sh
+chmod +x gentoo-2.sh
 wait
 
 echo "\n"
@@ -107,27 +102,14 @@ wget https://github.com/kehali-woldemichael/Linux-Install/raw/main/gentoo_make.c
 wait
 cd /mnt/gentoo
 
+echo "\n"
+echo "### Preparing to enter the new environment"
+
+# Preparing networking 
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
-cp --dereference /etc/resolv.conf /mnt/gentoo/etc/ #  Copy DNS info
+cp --dereference /etc/resolv.conf /mnt/gentoo/etc/resolv.conf # Copy DNS info
 wait
-
-exit
-
-echo "\n"
-echo "### Mounting file system"
-mount --types proc /proc /mnt/gentoo/proc
-mount --rbind /sys /mnt/gentoo/sys
-mount --make-rslave /mnt/gentoo/sys
-mount --rbind /dev /mnt/gentoo/dev
-mount --make-rslave /mnt/gentoo/dev
-mount --bind /run /mnt/gentoo/run
-mount --make-slave /mnt/gentoo/run 
-wait
-
-echo "\n"
-echo "### Entering the new environment"
 
 # Stage 2 of install
-wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-2.sh
-chmod +x gentoo-2.sh
+chroot /mnt/gentoo /bin/zsh 
