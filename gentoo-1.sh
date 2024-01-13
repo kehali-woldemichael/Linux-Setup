@@ -29,7 +29,7 @@ parted -s -a optimal $TARGET_DISK \  mklabel gpt \
   mkpart primary 0% $TARGET_BOOT_SIZE \
   mkpart primary $POST_BOOT_SIZE 100% \
 echo "### Formatting partitions..."
-yes | mkfs.vfat -L efi -F32 $disk1
+yes | mkfs.vfat -n efi -F32 $disk1
 yes | mkfs.btrfs -L rootfs -f $disk2
 
 echo "\n"
