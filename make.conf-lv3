@@ -34,7 +34,7 @@ USE="lto"
 
 # WARNING: Changing your CHOST is not something that should be done lightly.
 # Please consult https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable before changing.
-CHOST="aarch64-gentoo-linux"
+#CHOST="aarch64-gentoo-linux"
 
 # CPU flags for M1 mac
 #CPU_FLAGS_ARM="
