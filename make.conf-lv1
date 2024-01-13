@@ -2,7 +2,7 @@
 # built this stage.
 # Please consult /usr/share/portage/config/make.conf.example for a more
 # detailed example.
-COMMON_FLAGS="-O2 -pipe"
+COMMON_FLAGS="-O2 -pipe -march=native"
 CFLAGS="${COMMON_FLAGS}"
 CXXFLAGS="${COMMON_FLAGS}"
 FCFLAGS="${COMMON_FLAGS}"
@@ -10,7 +10,7 @@ FFLAGS="${COMMON_FLAGS}"
 
 # WARNING: Changing your CHOST is not something that should be done lightly.
 # Please consult https://wiki.gentoo.org/wiki/Changing_the_CHOST_variable before changing.
-CHOST="aarch64-gentoo-linux-musl"
+# CHOST="aarch64-gentoo-linux-musl"
 
 # NOTE: This stage was built with the bindist Use flag enabled
 
