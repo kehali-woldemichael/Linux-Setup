@@ -30,7 +30,7 @@ disk1="${TARGET_DISK}1"
 disk2="${TARGET_DISK}2"
 TARGET_BOOT_SIZE=1GiB
 TARGET_ROOT_SIZE=20GiB
-TARGET_SWAP_SIZE=10GiB
+TARGET_SWAP_SIZE=16GiB
 # Home will be rest of remaining space 
 
 echo "\n"
