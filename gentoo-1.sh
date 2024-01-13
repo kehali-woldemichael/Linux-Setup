@@ -126,5 +126,5 @@ echo "\n"
 echo "### Entering the new environment"
 
 # Stage 2 of install
-wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo-2.sh
+wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-2.sh
 chmod +x gentoo-2.sh
