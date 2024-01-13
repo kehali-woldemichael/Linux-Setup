@@ -56,7 +56,6 @@ vgcreate vg0 /dev/mapper/lvm
 echo "\n"
 echo "### Creating logical volumes for home/root within encrypted physical volume..."
 lvcreate -L ${TARGET_ROOT_SIZE} vg0 -n lv-root 
-lvcreate -L ${TARGET_SWAP_SIZE} vg0 -n lv-swap
 lvcreate -l 100%FREE vg0 -n lv-home
 
 echo "\n"
@@ -69,12 +68,12 @@ echo "\n"
 echo "### Setting filesystem for root/home/swap logical volumes..."
 yes | mkfs.btrfs /dev/vg0/lv-root
 yes | mkfs.btrfs /dev/vg0/lv-home
-yes | mkfs.btrfs /dev/vg0/lv-swap
 mkswap /dev/vg0/lv-swap
 swapon /dev/vg0/lv-swap
 
 echo "\n"
 echo "### Mounting partitions..."
+
 mkdir -p /mnt/gentoo
 mkdir -p /mnt/boot && mount ${TARGET_DISK}1 /mnt/boot
 mkdir -p /mnt/gentoo/root && mount /dev/vg0/lv-root /mnt/gentoo/root
@@ -102,9 +101,9 @@ echo "### Configuring make.conf"
 make_conf="/mnt/gentoo/etc/portage/make.conf"
 cd /mnt/gentoo/etc/portage
 wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo_make.conf
+wait
 cd /mnt/gentoo
 
-wait
 mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/ #  Copy DNS info
@@ -129,5 +128,3 @@ echo "### Entering the new environment"
 # Stage 2 of install
 wget https://github.com/kehali-woldemichael/Linux_Auto-Install/raw/main/gentoo-2.sh
 chmod +x gentoo-2.sh
-wait
-chroot /mnt/gentoo /bin/bash 
