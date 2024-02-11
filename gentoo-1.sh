@@ -67,15 +67,6 @@ mkdir -p /mnt/gentoo/efi && mount $disk1 /mnt/gentoo/efi
 mkdir -p /mnt/gentoo/home && mount -o compress-force=zstd:3 /dev/vg0/lv-home /mnt/gentoo/home
 # Swap is not mounted to the filesystem like a device file. 
 
-# Mount proc, dev and shm filesystems
-mount --types proc /proc /mnt/gentoo/proc
-mount --rbind /sys /mnt/gentoo/sys && mount --make-rslave /mnt/gentoo/sys
-mount --rbind /dev /mnt/gentoo/dev && mount --make-rslave /mnt/gentoo/dev
-mount --bind /run /mnt/gentoo/run && mount --make-slave /mnt/gentoo/run 
-test -L /dev/shm && rm /dev/shm && mkdir /dev/shm
-mount -t tmpfs -o nosuid,nodev,noexec shm /dev/shm
-chmod 1777 /dev/shm
-wait
 
 echo "\n"
 echo "### Downloading and unpacking stage3 tarball"
@@ -93,6 +84,16 @@ fi
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
 wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-2.sh
 chmod +x gentoo-2.sh
+wait
+
+# Mount proc, dev and shm filesystems
+mount --types proc /proc /mnt/gentoo/proc
+mount --rbind /sys /mnt/gentoo/sys && mount --make-rslave /mnt/gentoo/sys
+mount --rbind /dev /mnt/gentoo/dev && mount --make-rslave /mnt/gentoo/dev
+mount --bind /run /mnt/gentoo/run && mount --make-slave /mnt/gentoo/run 
+test -L /dev/shm && rm /dev/shm && mkdir /dev/shm
+mount -t tmpfs -o nosuid,nodev,noexec shm /dev/shm
+chmod 1777 /dev/shm
 wait
 
 echo "\n"
