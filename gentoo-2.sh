@@ -34,6 +34,7 @@ eselect profile set "$profile"
 
 #emerge --info | grep ^USE >> /etc/portage/make.conf
 #emerge --ask --verbose --update --deep --newuse @world
+#emerge --depclean
 
 
 echo "\n"
@@ -41,4 +42,6 @@ echo "### Setting CPU FLAGS"
 # (fix) emerge --ask app-portage/cpuid2cpuflags
 # (fix) echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 
-echo "US/Eastern" > /etc/timezone
+echo "US/Eastern" >> /etc/timezone
+
+
