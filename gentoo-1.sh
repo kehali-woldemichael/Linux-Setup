@@ -63,7 +63,7 @@ echo "\n"
 echo "### Mounting ..."
 
 mkdir -p /mnt/gentoo && mount -o compress-force=zstd:3 /dev/vg0/lv-root /mnt/gentoo
-mkdir -p /mnt/gentoo/efi && mount $disk1 /mnt/gentoo/efi
+#mkdir -p /mnt/gentoo/efi && mount $disk1 /mnt/gentoo/efi
 mkdir -p /mnt/gentoo/home && mount -o compress-force=zstd:3 /dev/vg0/lv-home /mnt/gentoo/home
 # Swap is not mounted to the filesystem like a device file. 
 
@@ -116,6 +116,3 @@ mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/resolv.conf # Copy DNS info
 wait
-
-# Stage 2 of install
-chroot /mnt/gentoo /bin/bash 
