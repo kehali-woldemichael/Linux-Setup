@@ -99,14 +99,6 @@ chmod 1777 /dev/shm
 wait
 
 echo "\n"
-echo "### Configuring make.conf"
-make_conf="/mnt/gentoo/etc/portage/make.conf"
-cd /mnt/gentoo/etc/portage
-wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-make.conf-lv1
-wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-make.conf-lv2
-wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-make.conf-lv3
-wait
-cd /mnt/gentoo
 
 echo "\n"
 echo "### Preparing to enter the new environment"
