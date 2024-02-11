@@ -19,11 +19,21 @@ wait
 
 echo "\n"
 echo "### Configuring Portage"
+mkdir --parents /etc/portage/repos.conf
+cp /usr/share/portage/config/repos.conf /etc/portage/repos.conf/gentoo.conf
+wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-make.conf-lv1
+wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-make.conf-lv2
+wget https://github.com/kehali-woldemichael/Linux-Setup/raw/main/gentoo-make.conf-lv3
+
+emerge --ask --verbose --oneshot app-portage/mirrorselect
+#mirrorselect -i -o >> /etc/portage/make.conf
+
 eselect profile list | grep -v desktop | grep -v systemd | grep -v musl | grep -v split-usr | grep -v big-endian | grep -v hardened 
 read -p "Profile: " profile
 eselect profile set "$profile"
-emerge --ask --verbose --update --deep --newuse @world
+
 #emerge --info | grep ^USE >> /etc/portage/make.conf
+#emerge --ask --verbose --update --deep --newuse @world
 
 
 echo "\n"
