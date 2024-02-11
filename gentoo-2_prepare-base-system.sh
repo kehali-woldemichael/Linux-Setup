@@ -54,14 +54,3 @@ eselect locale list
 read -p "Locale #: " locale_target
 eselect locale set $locale_target
 env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
-
-# Kernel Confirguration 
-#emerge --ask sys-kernel/linux-firmware
-# Install kernel sources ... for manual kernel configuration
-emerge --ask sys-kernel/gentoo-sources
-emerge --ask sys-apps/pciutils
-# Open menu-driven configuration screen
-cd /usr/src/linux*
-make menuconfig # follow instructions on https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Kernel#Alternative:_Manual_configuration
-
-
