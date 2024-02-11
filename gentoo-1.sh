@@ -118,4 +118,4 @@ cp --dereference /etc/resolv.conf /mnt/gentoo/etc/resolv.conf # Copy DNS info
 wait
 
 # Stage 2 of install
-chroot /mnt/gentoo /bin/zsh 
+chroot /mnt/gentoo /bin/bash 
