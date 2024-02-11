@@ -13,7 +13,9 @@ wait
 
 echo "\n"
 echo "### Configuring Portage"
-eselect profile set "default/linux/arm64/23.0"
+eselect profile list | grep -v desktop | grep -v systemd | grep -v musl | grep -v split-usr | grep -v big-endian | grep -v hardened 
+read -p "Profile: " profile
+eselect profile set "$profile"
 emerge --ask --verbose --update --deep --newuse @world
 emerge --info | grep ^USE > /etc/portage/make.conf
 
