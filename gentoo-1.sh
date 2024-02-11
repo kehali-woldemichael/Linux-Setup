@@ -55,7 +55,7 @@ echo "\n"
 echo "### Setting filesystem for root/home/swap logical volumes..."
 yes | mkfs.btrfs /dev/vg0/lv-root
 yes | mkfs.btrfs /dev/vg0/lv-home
-yes | mkfs.f2fs /dev/vg0/lv-swap
+#yes | mkfs.f2fs /dev/vg0/lv-swap
 mkswap /dev/vg0/lv-swap
 swapon /dev/vg0/lv-swap
 
@@ -74,11 +74,13 @@ cd /mnt/gentoo
 # Stage 3 with openrc
 if [[ $GENTOO_ARCH == "amd64" ]]; then 
     base_flags="-march=native -mtune=native -Ofast -pipe -flto"
-    wget "https://distfiles.gentoo.org/releases/amd64/autobuilds/20231217T170203Z/stage3-x32-openrc-20231217T170203Z.tar.xz"
+    url="https://distfiles.gentoo.org/releases/amd64/autobuilds/20231217T170203Z/stage3-x32-openrc-20231217T170203Z.tar.xz"
+    wget "$url"
     wait
 elif [[ $GENTOO_ARCH == "arm64" ]]; then
     base_flags="-mcpu=native -Ofast -pipe -flto"
-    wget "https://distfiles.gentoo.org/releases/arm64/autobuilds/20231218T134654Z/stage3-arm64-openrc-20231218T134654Z.tar.xz"
+    url="https://distfiles.gentoo.org/releases/arm64/autobuilds/20240204T231827Z/stage3-arm64-openrc-20240204T231827Z.tar.xz"
+    wget "$url"
     wait
 fi
 tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
